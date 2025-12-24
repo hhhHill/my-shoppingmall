@@ -1,0 +1,30 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: shopping-mall
+  profiles:
+    active: dev
+  jackson:
+    serialization:
+      WRITE_DATES_AS_TIMESTAMPS: false
+
+logging:
+  level:
+    com.example.mall: INFO
+
+jwt:
+  secret: "change-me-please-very-secret-key"
+  expiration: 86400000 # 1 day in ms
+
+app:
+  cors:
+    allowed-origins: "http://localhost:5173"
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui
+
