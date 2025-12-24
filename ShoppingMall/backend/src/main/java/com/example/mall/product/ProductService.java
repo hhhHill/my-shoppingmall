@@ -2,6 +2,8 @@ package com.example.mall.product;
 
 import com.example.mall.product.dto.ProductRequest;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,6 +21,13 @@ public class ProductService {
             return productRepository.findAll();
         }
         return productRepository.findByNameContainingIgnoreCase(q);
+    }
+
+    public Page<Product> pageProducts(String q, Pageable pageable) {
+        if (q == null || q.isBlank()) {
+            return productRepository.findAll(pageable);
+        }
+        return productRepository.findByNameContainingIgnoreCase(q, pageable);
     }
 
     public Product getById(Long id) {
@@ -52,4 +61,3 @@ public class ProductService {
         productRepository.deleteById(id);
     }
 }
-

@@ -12,13 +12,16 @@ export const useAuthStore = defineStore('auth', {
   actions: {
     async login(username, password) {
       const { data } = await api.post('/api/auth/login', { username, password })
-      if (data.success) {
-        this.token = data.data.token
-        this.user = { id: data.data.id, username: data.data.username, role: data.data.role }
-        localStorage.setItem('token', this.token)
-        localStorage.setItem('user', JSON.stringify(this.user))
-      }
+      // data is unwrapped payload: { token, id, username, role }
+      this.token = data.token
+      this.user = { id: data.id, username: data.username, role: data.role }
+      localStorage.setItem('token', this.token)
+      localStorage.setItem('user', JSON.stringify(this.user))
       return data
+    },
+    async register(username, password, email) {
+      await api.post('/api/auth/register', { username, password, email })
+      return true
     },
     logout() {
       this.token = null
@@ -28,4 +31,3 @@ export const useAuthStore = defineStore('auth', {
     }
   }
 })
-

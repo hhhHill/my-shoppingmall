@@ -36,7 +36,7 @@ public class SecurityConfig {
                 .exceptionHandling(eh -> eh.authenticationEntryPoint((request, response, authException) -> {
                     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                     response.setContentType("application/json;charset=UTF-8");
-                    response.getWriter().write("{\"success\":false,\"message\":\"Unauthorized\"}");
+                    response.getWriter().write("{\"code\":401,\"message\":\"Unauthorized\",\"data\":null}");
                 }))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/error").permitAll()
@@ -70,4 +70,3 @@ public class SecurityConfig {
         return configuration.getAuthenticationManager();
     }
 }
-

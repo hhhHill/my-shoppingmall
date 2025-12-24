@@ -2,12 +2,14 @@
   <div>
     <h2 style="margin-bottom:12px;">我的购物车</h2>
     <el-table :data="items" v-loading="loading" style="width: 100%">
-      <el-table-column prop="product.name" label="商品" />
+      <el-table-column prop="productName" label="商品" />
       <el-table-column label="数量">
         <template #default="{ row }">
           <el-input-number v-model="row.quantity" @change="(v)=>update(row,v)" :min="1" />
         </template>
       </el-table-column>
+      <el-table-column prop="price" label="单价" />
+      <el-table-column prop="subtotal" label="小计" />
       <el-table-column label="操作">
         <template #default="{ row }">
           <el-button type="danger" link @click="remove(row)">移除</el-button>
@@ -32,25 +34,25 @@ async function load() {
   loading.value = true
   try {
     const { data } = await api.get('/api/cart')
-    items.value = data?.data || []
+    items.value = data || []
   } finally { loading.value = false }
 }
 
 async function update(row, v) {
-  await api.put(`/api/cart/${row.id}`, { productId: row.product.id, quantity: v })
+  await api.post('/api/cart/items', { productId: row.productId, quantity: v })
 }
 
 async function remove(row) {
-  await api.delete(`/api/cart/${row.id}`)
+  await api.delete(`/api/cart/items/${row.productId}`)
   ElMessage.success('已移除')
   load()
 }
 
 async function checkout() {
   await api.post('/api/orders', {})
-  ElMessage.success('下单成功(示例)')
+  ElMessage.success('下单成功')
+  await load()
 }
 
 onMounted(load)
 </script>
-

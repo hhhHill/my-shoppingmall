@@ -16,7 +16,20 @@ api.interceptors.request.use((config) => {
 })
 
 api.interceptors.response.use(
-  (resp) => resp,
+  (resp) => {
+    const payload = resp?.data
+    if (payload && typeof payload === 'object' && 'code' in payload) {
+      if (payload.code === 0) {
+        // unwrap to data
+        return { ...resp, data: payload.data }
+      }
+      const err = new Error(payload.message || 'Request failed')
+      err.code = payload.code
+      err.response = resp
+      return Promise.reject(err)
+    }
+    return resp
+  },
   (error) => {
     const status = error?.response?.status
     if (status === 401) {
@@ -27,4 +40,3 @@ api.interceptors.response.use(
 )
 
 export default api
-

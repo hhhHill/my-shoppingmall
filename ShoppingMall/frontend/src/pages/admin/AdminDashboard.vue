@@ -6,7 +6,7 @@
         <AdminProducts />
       </el-tab-pane>
       <el-tab-pane label="订单管理" name="orders">
-        <el-alert type="info" title="示例占位：订单管理"/>
+        <AdminOrders />
       </el-tab-pane>
       <el-tab-pane label="用户管理" name="users">
         <AdminUsers />
@@ -23,7 +23,7 @@ import { ref } from 'vue'
 import AdminProducts from './AdminProducts.vue'
 import AdminUsers from './AdminUsers.vue'
 import AdminStats from './AdminStats.vue'
+import AdminOrders from './AdminOrders.vue'
 
 const tab = ref('products')
 </script>
-

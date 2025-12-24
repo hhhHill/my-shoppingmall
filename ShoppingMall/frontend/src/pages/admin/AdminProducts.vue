@@ -49,8 +49,8 @@ const form = reactive({ name: '', price: 0, stock: 0, category: '', imageUrl: ''
 async function load() {
   loading.value = true
   try {
-    const { data } = await api.get('/api/products', { params: { q: q.value || undefined } })
-    products.value = data?.data || []
+    const { data } = await api.get('/api/products', { params: { keyword: q.value || undefined, page: 0, size: 1000 } })
+    products.value = data?.items || []
   } finally { loading.value = false }
 }
 
@@ -61,7 +61,7 @@ function edit(row) {
 
 async function del(row) {
   await ElMessageBox.confirm('删除后不可恢复，确认吗？', '提示')
-  await api.delete(`/api/products/${row.id}`)
+  await api.delete(`/api/admin/products/${row.id}`)
   ElMessage.success('已删除')
   load()
 }
@@ -70,9 +70,9 @@ async function save() {
   saving.value = true
   try {
     if (form.id) {
-      await api.put(`/api/products/${form.id}`, form)
+      await api.put(`/api/admin/products/${form.id}`, form)
     } else {
-      await api.post('/api/products', form)
+      await api.post('/api/admin/products', form)
     }
     ElMessage.success('已保存')
     showCreate.value = false

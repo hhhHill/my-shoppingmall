@@ -4,6 +4,8 @@ import { useAuthStore } from '../stores/auth'
 const Products = () => import('../pages/Products.vue')
 const ProductDetail = () => import('../pages/ProductDetail.vue')
 const Login = () => import('../pages/Login.vue')
+const Register = () => import('../pages/Register.vue')
+const NotFound = () => import('../pages/NotFound.vue')
 const Cart = () => import('../pages/Cart.vue')
 const Orders = () => import('../pages/Orders.vue')
 const AdminDashboard = () => import('../pages/admin/AdminDashboard.vue')
@@ -13,10 +15,12 @@ const router = createRouter({
   routes: [
     { path: '/', name: 'home', component: Products },
     { path: '/login', name: 'login', component: Login },
+    { path: '/register', name: 'register', component: Register },
     { path: '/product/:id', name: 'product', component: ProductDetail },
     { path: '/cart', name: 'cart', component: Cart, meta: { requiresAuth: true } },
     { path: '/orders', name: 'orders', component: Orders, meta: { requiresAuth: true } },
     { path: '/admin', name: 'admin', component: AdminDashboard, meta: { requiresAuth: true, requiresAdmin: true } },
+    { path: '/:pathMatch(.*)*', name: 'notfound', component: NotFound }
   ]
 })
 
@@ -32,4 +36,3 @@ router.beforeEach((to, from, next) => {
 })
 
 export default router
-

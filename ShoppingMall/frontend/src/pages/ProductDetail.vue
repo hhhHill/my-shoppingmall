@@ -33,7 +33,7 @@ const quantity = ref(1)
 
 async function load() {
   const { data } = await api.get(`/api/products/${route.params.id}`)
-  product.value = data?.data
+  product.value = data
 }
 
 async function addToCart() {
@@ -41,10 +41,9 @@ async function addToCart() {
     router.push({ name: 'login', query: { redirect: route.fullPath } })
     return
   }
-  await api.post('/api/cart', { productId: product.value.id, quantity: quantity.value })
+  await api.post('/api/cart/items', { productId: product.value.id, quantity: quantity.value })
   ElMessage.success('已加入购物车')
 }
 
 onMounted(load)
 </script>
-

@@ -36,6 +36,12 @@ public class AuthController {
         return ResponseEntity.ok(ApiResponse.ok(authService.login(req)));
     }
 
+    @PostMapping("/logout")
+    public ResponseEntity<ApiResponse<Object>> logout() {
+        // JWT stateless logout: frontend can just drop the token
+        return ResponseEntity.ok(ApiResponse.ok("已登出", null));
+    }
+
     @GetMapping("/me")
     public ResponseEntity<ApiResponse<Object>> me(@AuthenticationPrincipal UserDetails principal) {
         if (principal == null) {
@@ -47,4 +53,3 @@ public class AuthController {
 
     record SimpleUser(Long id, String username, String role) {}
 }
-

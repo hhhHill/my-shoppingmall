@@ -10,6 +10,7 @@
       <el-menu-item index="/admin">控制台</el-menu-item>
     </el-sub-menu>
     <el-menu-item v-if="!auth.isAuthenticated" index="/login">登录</el-menu-item>
+    <el-menu-item v-if="!auth.isAuthenticated" index="/register">注册</el-menu-item>
     <el-sub-menu v-else index="user">
       <template #title>{{ auth.user?.username }}</template>
       <el-menu-item @click="onLogout">退出登录</el-menu-item>
@@ -33,4 +34,3 @@ function onLogout() {
 <style scoped>
 .el-menu { padding: 0 16px; }
 </style>
-

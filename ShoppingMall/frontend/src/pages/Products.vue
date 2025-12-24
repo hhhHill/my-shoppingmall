@@ -10,6 +10,16 @@
       </el-col>
     </el-row>
     <el-empty v-if="!loading && products.length===0" description="暂无商品" />
+    <div style="margin-top:12px; text-align:center;">
+      <el-pagination
+        v-model:current-page="page"
+        v-model:page-size="size"
+        :total="total"
+        layout="prev, pager, next"
+        @current-change="load"
+        @size-change="load"
+      />
+    </div>
   </div>
   
 </template>
@@ -22,12 +32,17 @@ import ProductCard from '../components/ProductCard.vue'
 const q = ref('')
 const loading = ref(false)
 const products = ref([])
+const page = ref(1)
+const size = ref(12)
+const total = ref(0)
 
 async function load() {
   loading.value = true
   try {
-    const { data } = await api.get('/api/products', { params: { q: q.value || undefined }})
-    products.value = data?.data || []
+    const { data } = await api.get('/api/products', { params: { page: page.value - 1, size: size.value, keyword: q.value || undefined }})
+    // data is PageResponse
+    products.value = data.items || []
+    total.value = data.totalElements || 0
   } finally {
     loading.value = false
   }
@@ -35,4 +50,3 @@ async function load() {
 
 onMounted(load)
 </script>
-

@@ -33,16 +33,12 @@ const route = useRoute()
 async function onSubmit() {
   loading.value = true
   try {
-    const res = await auth.login(form.username, form.password)
-    if (res.success) {
-      ElMessage.success('登录成功')
-      const redirect = route.query.redirect || '/'
-      router.replace(redirect)
-    } else {
-      ElMessage.error(res.message || '登录失败')
-    }
+    await auth.login(form.username, form.password)
+    ElMessage.success('登录成功')
+    const redirect = route.query.redirect || '/'
+    router.replace(redirect)
   } catch (e) {
-    ElMessage.error('登录失败')
+    ElMessage.error(e.message || '登录失败')
   } finally {
     loading.value = false
   }
@@ -53,4 +49,3 @@ async function onSubmit() {
 .wrap { display:flex; justify-content:center; padding-top:60px; }
 .box { width: 360px; }
 </style>
-
