@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotNull;
 public class CartItemRequest {
     @NotNull
     private Long productId;
-    @NotNull @Min(1)
+    @NotNull @Min(0)
     private Integer quantity;
 
     public Long getProductId() { return productId; }
@@ -14,4 +14,3 @@ public class CartItemRequest {
     public Integer getQuantity() { return quantity; }
     public void setQuantity(Integer quantity) { this.quantity = quantity; }
 }
-

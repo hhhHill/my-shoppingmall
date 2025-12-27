@@ -1,9 +1,9 @@
 <template>
   <div>
     <Navbar />
-    <div style="padding:16px; max-width: 1200px; margin: 0 auto;">
+    <main class="container" style="padding: var(--sp-6) 0 var(--sp-8);">
       <router-view />
-    </div>
+    </main>
   </div>
 </template>
 
@@ -14,4 +14,3 @@ import Navbar from './components/Navbar.vue'
 <style>
 body { margin: 0; }
 </style>
-

@@ -43,10 +43,16 @@ public class CartController {
 
     // New spec: POST /api/cart/items -> add/update quantity
     @PostMapping("/items")
+    @org.springframework.transaction.annotation.Transactional
     public ResponseEntity<ApiResponse<CartItemResponse>> addOrUpdate(@AuthenticationPrincipal UserDetails principal,
                                                                      @Valid @RequestBody CartItemRequest req) {
         User user = userRepository.findByUsername(principal.getUsername()).orElseThrow();
         Product product = productRepository.findById(req.getProductId()).orElseThrow();
+        // quantity <= 0 -> remove item (idempotent)
+        if (req.getQuantity() == null || req.getQuantity() <= 0) {
+            cartItemRepository.deleteByUserIdAndProductId(user.getId(), product.getId());
+            return ResponseEntity.ok(ApiResponse.ok("删除成功", null));
+        }
         CartItem item = cartItemRepository.findByUserIdAndProductId(user.getId(), product.getId()).orElse(null);
         if (item == null) {
             item = new CartItem();
@@ -60,6 +66,7 @@ public class CartController {
 
     // New spec: DELETE /api/cart/items/{productId}
     @DeleteMapping("/items/{productId}")
+    @org.springframework.transaction.annotation.Transactional
     public ResponseEntity<ApiResponse<Object>> removeByProduct(@PathVariable Long productId,
                                                                @AuthenticationPrincipal UserDetails principal) {
         User user = userRepository.findByUsername(principal.getUsername()).orElseThrow();
@@ -84,6 +91,10 @@ public class CartController {
             return ResponseEntity.status(403).body(ApiResponse.fail(403, "无权限"));
         }
         Product product = productRepository.findById(req.getProductId()).orElseThrow();
+        if (req.getQuantity() == null || req.getQuantity() <= 0) {
+            cartItemRepository.deleteById(id);
+            return ResponseEntity.ok(ApiResponse.ok("删除成功", null));
+        }
         item.setQuantity(req.getQuantity());
         cartItemRepository.save(item);
         return ResponseEntity.ok(ApiResponse.ok(toDto(product, item.getQuantity())));

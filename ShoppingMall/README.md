@@ -1,6 +1,6 @@
 简化电商网站（Java Spring Boot + Vue3）
 
-学号：__________   姓名：__________
+学号：202330450601   姓名：黄俊超
 
 项目简介：
 - 后端：Java 17 + Spring Boot 3.x + Maven + Spring Security + JWT + Spring Validation + Spring Data JPA + Swagger/OpenAPI

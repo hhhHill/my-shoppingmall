@@ -23,11 +23,19 @@ public class ProductService {
         return productRepository.findByNameContainingIgnoreCase(q);
     }
 
-    public Page<Product> pageProducts(String q, Pageable pageable) {
-        if (q == null || q.isBlank()) {
+    public Page<Product> pageProducts(String q, String category, Pageable pageable) {
+        boolean hasQ = q != null && !q.isBlank();
+        boolean hasCat = category != null && !category.isBlank();
+
+        if (hasCat && hasQ) {
+            return productRepository.findByCategoryAndNameContainingIgnoreCase(category, q, pageable);
+        } else if (hasCat) {
+            return productRepository.findByCategory(category, pageable);
+        } else if (hasQ) {
+            return productRepository.findByNameContainingIgnoreCase(q, pageable);
+        } else {
             return productRepository.findAll(pageable);
         }
-        return productRepository.findByNameContainingIgnoreCase(q, pageable);
     }
 
     public Product getById(Long id) {

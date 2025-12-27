@@ -17,6 +17,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -40,10 +41,11 @@ public class ProductController {
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "10") int size,
             @RequestParam(value = "keyword", required = false) String keyword,
-            @RequestParam(value = "q", required = false) String q
+            @RequestParam(value = "q", required = false) String q,
+            @RequestParam(value = "category", required = false) String category
     ) {
         String key = (keyword != null && !keyword.isBlank()) ? keyword : q;
-        Page<Product> p = productService.pageProducts(key, PageRequest.of(page, size));
+        Page<Product> p = productService.pageProducts(key, category, PageRequest.of(page, size));
         List<ProductResponse> items = p.getContent().stream().map(this::toDto).collect(Collectors.toList());
         PageResponse<ProductResponse> body = new PageResponse<>(items, p.getNumber(), p.getSize(), p.getTotalElements(), p.getTotalPages());
         return ResponseEntity.ok(ApiResponse.ok(body));
@@ -91,8 +93,34 @@ public class ProductController {
         r.setDescription(p.getDescription());
         r.setPrice(p.getPrice());
         r.setStock(p.getStock());
-        r.setImageUrl(p.getImageUrl());
+        r.setImageUrl(resolveImageUrl(p.getImageUrl()));
         r.setCategory(p.getCategory());
         return r;
+    }
+
+    private String resolveImageUrl(String raw) {
+        if (raw == null) return null;
+        String val = raw.trim();
+        if (val.isEmpty()) return null;
+
+        String lower = val.toLowerCase();
+        boolean isAbsolute = lower.startsWith("http://") || lower.startsWith("https://") || lower.startsWith("//");
+        if (isAbsolute) {
+            try {
+                java.net.URI uri = java.net.URI.create(val);
+                String host = uri.getHost();
+                // If pointing to localhost/127.* in DB, replace with current host
+                if (host != null && ("localhost".equalsIgnoreCase(host) || host.startsWith("127."))) {
+                    String path = uri.getRawPath();
+                    if (path == null || path.isBlank()) return val;
+                    String base = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
+                    if (path.startsWith("/")) return base + path;
+                    return base + "/" + path;
+                }
+            } catch (Exception ignore) { /* fallthrough to return as-is */ }
+            return val;
+        }
+        String path = val.startsWith("/") ? val : "/" + val;
+        return ServletUriComponentsBuilder.fromCurrentContextPath().path(path).toUriString();
     }
 }
