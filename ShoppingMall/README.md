@@ -1,6 +1,6 @@
 购物商城（Java Spring Boot + Vue3）
 
-网站地址：请替换为实际部署地址（例如 https://my-tunnel.hill13.online/）
+网站地址：https://my-tunnel.hill13.online/
 
 作者信息：黄俊超（学号：202330450601）
 
